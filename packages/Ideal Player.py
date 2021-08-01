@@ -31,7 +31,7 @@ def choose_file_func():
                                                           "*.*"), ))
     if play_filename:
         memory = play_filename[:play_filename.rindex('/') + 1]
-        with open('browse memory.txt', 'w') as f:
+        with open('browse memory.txt', 'w', encoding='utf-8-sig') as f:
             f.write(memory)
         last_place = memory
         file_type = os.path.splitext(play_filename)[1][1:]
@@ -46,14 +46,14 @@ def choose_file_func():
     root.destroy()
 
 
-with open('packages/config.py', encoding='utf-8') as f:
+with open('packages/config.py', encoding='utf-8-sig') as f:
     exec(f.read())
 play_filename = None
 is_playing = False
 player = pyglet.media.Player()
 current_playlist = []
 try:
-    with open('browse memory.txt') as f:
+    with open('browse memory.txt', encoding='utf-8-sig') as f:
         last_place = f.read()
 except:
     last_place = "./"
