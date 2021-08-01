@@ -4,10 +4,10 @@ import time
 import sys
 import pyglet
 import keyboard
+import tkinter
 from tkinter import filedialog
 import pygame.midi
 from pyglet.window import mouse
-from pyglet import shapes
 from tkinter import Tk
 from threading import Thread
 
