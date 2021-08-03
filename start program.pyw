@@ -1,15 +1,14 @@
-import pygame
-import os
-import time
-import sys
-import pyglet
-import keyboard
-import tkinter
+import traceback
+from tkinter import *
+from tkinter import ttk
+from tkinter import font
+from tkinter.scrolledtext import ScrolledText
+import PIL.Image, PIL.ImageTk
 from tkinter import filedialog
-import pygame.midi
-from pyglet.window import mouse
-from tkinter import Tk
-from threading import Thread
+import os, sys
+import re
+from yapf.yapflib.yapf_api import FormatCode
+import pygame
 
 #abs_path = os.path.dirname(sys.executable)
 abs_path = os.path.dirname(__file__)
