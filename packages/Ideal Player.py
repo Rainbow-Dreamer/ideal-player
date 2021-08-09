@@ -1,16 +1,3 @@
-import traceback
-from tkinter import *
-from tkinter import ttk
-from tkinter import font
-from tkinter.scrolledtext import ScrolledText
-import PIL.Image, PIL.ImageTk
-from tkinter import filedialog
-import os, sys
-import re
-from yapf.yapflib.yapf_api import FormatCode
-import pygame
-import random
-
 pygame.mixer.init(44100, -16, 1, 1024)
 
 with open('packages/config.py', encoding='utf-8-sig') as f:
@@ -30,6 +17,7 @@ class Root(Tk):
 
         self.is_playing = False
         self.is_pause = False
+        self.waiting = False
         self.current_playing_object = None
         self.current_playing_filename = None
         self.current_playing_ind = None
@@ -40,26 +28,26 @@ class Root(Tk):
             self.last_place = "./"
         self.choose_file_button = ttk.Button(
             self, text='选择文件播放', command=self.choose_file_button_func)
-        self.choose_file_button.place(x=50, y=100)
+        self.choose_file_button.place(x=50, y=50)
 
         self.add_to_queue_button = ttk.Button(
             self, text='加入队列', command=self.multiple_choose_files)
-        self.add_to_queue_button.place(x=200, y=100)
+        self.add_to_queue_button.place(x=200, y=50)
 
         self.current_playing_label = ttk.Label(self,
                                                text='当前正在播放: ',
                                                wraplength=600)
-        self.current_playing_label.place(x=50, y=300)
+        self.current_playing_label.place(x=50, y=330)
 
         self.pause_button = ttk.Button(self,
                                        text='暂停',
                                        command=self.pause_playing)
-        self.pause_button.place(x=200, y=150)
+        self.pause_button.place(x=200, y=100)
 
         self.stop_button = ttk.Button(self,
                                       text='停止',
                                       command=self.stop_playing)
-        self.stop_button.place(x=50, y=150)
+        self.stop_button.place(x=50, y=100)
 
         self.previous_button = ttk.Button(self,
                                           text='上一首',
@@ -68,19 +56,63 @@ class Root(Tk):
         self.random_playing_button = ttk.Button(self,
                                                 text='随机播放',
                                                 command=self.random_playing)
-        self.previous_button.place(x=50, y=200)
-        self.next_button.place(x=200, y=200)
-        self.random_playing_button.place(x=50, y=250)
+        self.previous_button.place(x=50, y=150)
+        self.next_button.place(x=200, y=150)
+        self.random_playing_button.place(x=50, y=200)
 
         self.multiple_choose_files_button = ttk.Button(
             self, text='清空队列', command=self.clear_queue)
-        self.multiple_choose_files_button.place(x=200, y=250)
+        self.multiple_choose_files_button.place(x=200, y=200)
+
+        self.playing_mode_button = ttk.Button(self,
+                                              text='播放模式: 列表循环',
+                                              command=self.change_playing_mode)
+        self.playing_mode_button.place(x=50, y=250)
+        self.playing_mode = 0
 
         self.bind(
             '<Button-3>', lambda e: self.player_queue.selection_clear(0, END)
             or self.focus_set())
 
+        self.bind('<w>', lambda e: self.play_previous())
+        self.bind('<s>', lambda e: self.play_next())
+        self.bind('<z>', lambda e: self.random_playing())
+        self.bind('<a>', lambda e: self.move_volume_bar_set_value(-5))
+        self.bind('<d>', lambda e: self.move_volume_bar_set_value(5))
+
+        self.slider = StringVar()
+        self.volume_interval = [0, 100]
+        self.volume_length = self.volume_interval[0] - self.volume_interval[1]
+        self.current_volume_percentage = 100
+        self.slider.set(f'音量: {self.current_volume_percentage}%')
+        self.slider_label = ttk.Label(self, textvariable=self.slider)
+        self.slider_label.place(x=400, y=280)
+        self.set_move_volume_bar = ttk.Scale(
+            self,
+            from_=0,
+            to=100,
+            orient=HORIZONTAL,
+            length=200,
+            value=self.current_volume_percentage,
+            command=lambda e: self.change_move_volume_bar(e))
+        self.set_move_volume_bar.place(x=500, y=280)
+
         self.display_player_queue()
+
+        self.check_is_playing()
+
+    def check_is_playing(self):
+        if self.is_playing:
+            if not pygame.mixer.get_busy():
+                if self.playing_mode == 0:
+                    self.play_next()
+                elif self.playing_mode == 1:
+                    self.current_playing_object.play()
+                elif self.playing_mode == 2:
+                    self.random_playing()
+                self.after(2000, self.check_is_playing)
+                return
+        self.after(100, self.check_is_playing)
 
     def show(self, text=''):
         self.current_playing_label.configure(text=text)
@@ -112,6 +144,8 @@ class Root(Tk):
                 self.append_new_music(play_filename)
                 return
             if self.is_playing:
+                self.is_playing = False
+                self.waiting = True
                 self.current_playing_object.fadeout(500)
                 self.after(600,
                            lambda: self.play_current_music(current_playing))
@@ -139,6 +173,8 @@ class Root(Tk):
                 self.current_playing_ind = current_queue_list.index(
                     play_filename)
                 if self.is_playing:
+                    self.is_playing = False
+                    self.waiting = True
                     self.current_playing_object.fadeout(500)
                     self.after(600,
                                lambda: self.append_new_music(play_filename))
@@ -149,6 +185,8 @@ class Root(Tk):
     def play_current_music(self, current_playing):
         pygame.mixer.fadeout(200)
         current_playing.play()
+        self.is_playing = True
+        self.waiting = False
 
     def append_new_music(self, play_filename, mode=0):
         if mode == 0:
@@ -160,6 +198,7 @@ class Root(Tk):
             pygame.mixer.fadeout(200)
             current_playing.play()
             self.is_playing = True
+            self.waiting = False
         elif mode == 1:
             current_queue_list.append(play_filename)
 
@@ -244,6 +283,8 @@ class Root(Tk):
                 self.is_playing = True
 
     def play_next(self):
+        if self.waiting:
+            return
         if current_queue_list:
             if not self.current_playing_filename or (
                     self.current_playing_filename not in current_queue_list):
@@ -251,14 +292,17 @@ class Root(Tk):
             else:
                 current_ind = current_queue_list.index(
                     self.current_playing_filename)
-            if current_ind == len(current_queue_list) - 1:
+            if current_ind >= len(current_queue_list) - 1:
                 current_ind = -1
             next_filename = current_queue_list[current_ind + 1]
             self.player_queue.selection_clear(0, END)
             self.player_queue.selection_set(current_ind + 1)
+            self.focus_set()
             self.play_music(next_filename)
 
     def play_previous(self):
+        if self.waiting:
+            return
         if current_queue_list:
             if not self.current_playing_filename or (
                     self.current_playing_filename not in current_queue_list):
@@ -266,7 +310,7 @@ class Root(Tk):
             else:
                 current_ind = current_queue_list.index(
                     self.current_playing_filename)
-            if current_ind == 0:
+            if current_ind <= 0:
                 current_ind = len(current_queue_list)
             next_filename = current_queue_list[current_ind - 1]
             self.player_queue.selection_clear(0, END)
@@ -289,6 +333,8 @@ class Root(Tk):
                 self.add_to_queue(mode=1, play_filename=each)
 
     def random_playing(self):
+        if self.waiting:
+            return
         if current_queue_list:
             self.play_music(random.choice(current_queue_list))
 
@@ -300,6 +346,45 @@ class Root(Tk):
         self.player_queue.delete(0, END)
         self.focus_set()
         self.current_playing_ind = None
+
+    def change_playing_mode(self):
+        if self.playing_mode == 0:
+            self.playing_mode = 1
+        elif self.playing_mode == 1:
+            self.playing_mode = 2
+        elif self.playing_mode == 2:
+            self.playing_mode = 3
+        elif self.playing_mode == 3:
+            self.playing_mode = 0
+
+        if self.playing_mode == 0:
+            self.playing_mode_button.configure(text='播放模式: 列表循环')
+        elif self.playing_mode == 1:
+            self.playing_mode_button.configure(text='播放模式: 单曲循环')
+        elif self.playing_mode == 2:
+            self.playing_mode_button.configure(text='播放模式: 随机播放')
+        elif self.playing_mode == 3:
+            self.playing_mode_button.configure(text='播放模式: 播完暂停')
+
+    def change_move_volume_bar(self, e):
+        self.current_volume_percentage = round(float(e) * 2) / 2
+        self.slider.set(f'音量: {self.current_volume_percentage}%')
+        if self.current_playing_object:
+            self.current_playing_object.set_volume(
+                self.current_volume_percentage / 100)
+
+    def move_volume_bar_set_value(self, change):
+        if self.current_volume_percentage + change > 100:
+            self.current_volume_percentage = 100
+        elif self.current_volume_percentage + change < 0:
+            self.current_volume_percentage = 0
+        else:
+            self.current_volume_percentage += change
+        self.slider.set(f'音量: {self.current_volume_percentage}%')
+        self.set_move_volume_bar.set(self.current_volume_percentage)
+        if self.current_playing_object:
+            self.current_playing_object.set_volume(
+                self.current_volume_percentage / 100)
 
 
 root = Root()

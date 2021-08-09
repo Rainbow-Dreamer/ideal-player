@@ -9,6 +9,7 @@ import os, sys
 import re
 from yapf.yapflib.yapf_api import FormatCode
 import pygame
+import random
 
 abs_path = os.path.dirname(__file__)
 os.chdir(abs_path)
