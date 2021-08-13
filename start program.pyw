@@ -11,8 +11,10 @@ from yapf.yapflib.yapf_api import FormatCode
 import pygame
 import random
 
-abs_path = os.path.dirname(__file__)
+abs_path = os.path.dirname(os.path.abspath(__file__))
 os.chdir(abs_path)
+sys.path.append(abs_path)
+sys.path.append('packages')
 
 with open('packages/Ideal Player.py', encoding='utf-8-sig') as f:
     exec(f.read())
