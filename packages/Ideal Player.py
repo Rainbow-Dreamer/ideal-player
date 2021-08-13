@@ -210,6 +210,7 @@ class Root(Tk):
         self.player_queue = Listbox(self,
                                     yscrollcommand=self.player_queue_bar_v.set,
                                     xscrollcommand=self.player_queue_bar_h.set)
+        self.player_queue.config(activestyle='none')
         self.player_queue_bar_v.configure(command=self.player_queue.yview)
         self.player_queue_bar_h.configure(command=self.player_queue.xview)
         self.player_queue.place(x=370, y=50, width=400, height=200)
