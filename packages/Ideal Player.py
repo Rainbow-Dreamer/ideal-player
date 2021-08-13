@@ -14,6 +14,10 @@ class Root(Tk):
         self.minsize(800, 400)
         self.title('Ideal Player')
         self.geometry('800x400+350+300')
+        if background_image:
+            self.bg_image = ImageTk.PhotoImage(Image.open(background_image))
+            self.bg_label = ttk.Label(self, image=self.bg_image)
+            self.bg_label.place(x=-120, y=0)
 
         self.is_playing = False
         self.is_pause = False
