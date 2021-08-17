@@ -83,6 +83,13 @@ class Root(Tk):
         self.bind('<z>', lambda e: self.random_playing())
         self.bind('<a>', lambda e: self.move_volume_bar_set_value(-5))
         self.bind('<d>', lambda e: self.move_volume_bar_set_value(5))
+        self.bind('<space>', lambda e: self.pause_playing())
+        self.bind('<e>', lambda e: self.stop_playing())
+        self.bind('<x>', lambda e: self.choose_file_button_func())
+        self.bind('<c>', lambda e: self.multiple_choose_files())
+        self.bind('<r>', lambda e: self.clear_queue())
+        self.bind('<v>', lambda e: self.change_playing_mode())
+        self.bind('<q>', lambda e: self.destroy())
 
         self.slider = StringVar()
         self.volume_interval = [0, 100]
