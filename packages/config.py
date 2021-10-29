@@ -1,6 +1,6 @@
 
 screen_size = (1200, 700)
-background_image = '' # 'resources/Hinanawi.Tenshi.full.233075.jpg'
+background_image = ''
 background_size = (1200, 700)
 backgrond_place_x = 0
 backgrond_place_y = 0
