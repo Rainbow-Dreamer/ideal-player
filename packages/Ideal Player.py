@@ -149,7 +149,9 @@ class Root(Tk):
         self.add_to_queue_button.configure(
             text=self.language_dict['Add to queue'])
         self.current_playing_label.configure(
-            text=self.language_dict['Current playing: '])
+            text=
+            f'{self.language_dict["Current playing: "]} {self.current_playing_filename}'
+        )
         self.pause_button.configure(text=self.language_dict['Pause'])
         self.stop_button.configure(text=self.language_dict['Stop'])
         self.previous_button.configure(text=self.language_dict['Previous'])
