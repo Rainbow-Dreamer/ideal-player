@@ -28,7 +28,7 @@ class Root(Tk):
         self.is_pause = False
         self.waiting = False
         self.current_playing_object = None
-        self.current_playing_filename = None
+        self.current_playing_filename = ''
         self.current_playing_ind = None
         try:
             with open('browse memory.txt', encoding='utf-8-sig') as f:
