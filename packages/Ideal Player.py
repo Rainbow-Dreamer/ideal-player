@@ -1,4 +1,4 @@
-pygame.mixer.init(44100, -16, 1, 1024)
+pygame.mixer.init(44100, -16, 2, 1024)
 
 with open('packages/config.py', encoding='utf-8-sig') as f:
     exec(f.read())
@@ -208,6 +208,8 @@ class Root(Tk):
             if play_filename in current_playlist:
                 current_playing = current_play_media[current_playlist.index(
                     play_filename)]
+                current_playing.set_volume(self.current_volume_percentage /
+                                           100)
             else:
                 self.append_new_music(play_filename)
                 return
@@ -226,7 +228,7 @@ class Root(Tk):
 
         else:
             file_type = os.path.splitext(play_filename)[1][1:]
-            if file_type in supported_audio_file_formats:
+            if file_type.lower() in supported_audio_file_formats:
                 self.show(
                     f'{self.language_dict["Current playing: "]} {play_filename}'
                 )
@@ -262,6 +264,7 @@ class Root(Tk):
         if mode == 0:
             current_playlist.append(play_filename)
             current_playing = pygame.mixer.Sound(play_filename)
+            current_playing.set_volume(self.current_volume_percentage / 100)
             current_play_media.append(current_playing)
             self.current_playing_object = current_playing
             self.current_playing_filename = play_filename
@@ -302,7 +305,7 @@ class Root(Tk):
 
             if play_filename not in current_playlist and play_filename not in current_queue_list:
                 file_type = os.path.splitext(play_filename)[1][1:]
-                if file_type in supported_audio_file_formats:
+                if file_type.lower() in supported_audio_file_formats:
                     self.player_queue.insert(END,
                                              os.path.basename(play_filename))
                     self.append_new_music(play_filename, mode=1)
