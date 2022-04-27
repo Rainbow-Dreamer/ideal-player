@@ -12,6 +12,7 @@ current_queue_list = []
 
 
 class Root(Tk):
+
     def __init__(self):
         super(Root, self).__init__()
         self.minsize(*screen_size)
@@ -30,11 +31,6 @@ class Root(Tk):
         self.current_playing_object = None
         self.current_playing_filename = ''
         self.current_playing_ind = None
-        try:
-            with open('browse memory.txt', encoding='utf-8-sig') as f:
-                self.last_place = f.read()
-        except:
-            self.last_place = "./"
         self.language_dict = language_dict[language]
         self.choose_file_button = ttk.Button(
             self,
@@ -186,15 +182,9 @@ class Root(Tk):
 
     def choose_file_button_func(self):
         play_filename = filedialog.askopenfilename(
-            initialdir=self.last_place,
             title="Choose file you want to play",
             filetype=(("all files", "*.*"), ))
         if play_filename:
-            memory = play_filename[:play_filename.rindex('/') + 1]
-            if self.last_place != memory:
-                with open('browse memory.txt', 'w', encoding='utf-8-sig') as f:
-                    f.write(memory)
-                self.last_place = memory
             self.play_music(play_filename)
 
     def play_music(self, play_filename):
@@ -293,16 +283,9 @@ class Root(Tk):
     def add_to_queue(self, mode=0, play_filename=None):
         if mode == 0:
             play_filename = filedialog.askopenfilename(
-                initialdir=self.last_place,
                 title="Choose the files you want to add to queue",
                 filetype=(("all files", "*.*"), ))
         if play_filename:
-            memory = play_filename[:play_filename.rindex('/') + 1]
-            if self.last_place != memory:
-                with open('browse memory.txt', 'w', encoding='utf-8-sig') as f:
-                    f.write(memory)
-                self.last_place = memory
-
             if play_filename not in current_playlist and play_filename not in current_queue_list:
                 file_type = os.path.splitext(play_filename)[1][1:]
                 if file_type.lower() in supported_audio_file_formats:
@@ -393,16 +376,10 @@ class Root(Tk):
 
     def multiple_choose_files(self):
         play_filenames = filedialog.askopenfilenames(
-            initialdir=self.last_place,
             title="Choose the files you want to play",
             filetype=(("all files", "*.*"), ))
         if play_filenames:
             play_filename = play_filenames[0]
-            memory = play_filename[:play_filename.rindex('/') + 1]
-            if self.last_place != memory:
-                with open('browse memory.txt', 'w', encoding='utf-8-sig') as f:
-                    f.write(memory)
-                self.last_place = memory
             for each in play_filenames:
                 self.add_to_queue(mode=1, play_filename=each)
 
