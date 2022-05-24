@@ -1,9 +1,9 @@
 pygame.mixer.init(44100, -16, 2, 1024)
 
-with open('packages/config.py', encoding='utf-8-sig') as f:
+with open('packages/config.py', encoding='utf-8') as f:
     exec(f.read())
 
-with open('packages/languages.py', encoding='utf-8-sig') as f:
+with open('packages/languages.py', encoding='utf-8') as f:
     language_dict = eval(f.read())
 
 current_playlist = []

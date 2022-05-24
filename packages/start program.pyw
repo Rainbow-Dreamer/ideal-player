@@ -17,5 +17,5 @@ os.chdir(abs_path)
 sys.path.append(abs_path)
 sys.path.append('packages')
 
-with open('packages/Ideal Player.py', encoding='utf-8-sig') as f:
+with open('packages/Ideal Player.py', encoding='utf-8') as f:
     exec(f.read())
