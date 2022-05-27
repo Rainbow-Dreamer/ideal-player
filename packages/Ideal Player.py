@@ -183,7 +183,7 @@ class Root(Tk):
     def choose_file_button_func(self):
         play_filename = filedialog.askopenfilename(
             title="Choose file you want to play",
-            filetype=(("all files", "*.*"), ))
+            filetypes=(("all files", "*"), ))
         if play_filename:
             self.play_music(play_filename)
 
@@ -284,7 +284,7 @@ class Root(Tk):
         if mode == 0:
             play_filename = filedialog.askopenfilename(
                 title="Choose the files you want to add to queue",
-                filetype=(("all files", "*.*"), ))
+                filetypes=(("all files", "*"), ))
         if play_filename:
             if play_filename not in current_playlist and play_filename not in current_queue_list:
                 file_type = os.path.splitext(play_filename)[1][1:]
@@ -377,7 +377,7 @@ class Root(Tk):
     def multiple_choose_files(self):
         play_filenames = filedialog.askopenfilenames(
             title="Choose the files you want to play",
-            filetype=(("all files", "*.*"), ))
+            filetypes=(("all files", "*"), ))
         if play_filenames:
             play_filename = play_filenames[0]
             for each in play_filenames:
