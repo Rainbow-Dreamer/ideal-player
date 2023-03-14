@@ -21,7 +21,7 @@ class Root(Tk):
         if background_image:
             self.bg_image = ImageTk.PhotoImage(
                 Image.open(background_image).resize(screen_size,
-                                                    Image.Resampling.LANCZOS))
+                                                    Image.ANTIALIAS))
             self.bg_label = ttk.Label(self, image=self.bg_image)
             self.bg_label.place(x=0, y=0)
 
